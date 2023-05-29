@@ -140,7 +140,7 @@ public class NotePlacement : PlacementController<BaseNote, NoteContainer, NoteGr
             : null;
 
         var posX = Mathf.RoundToInt(instantiatedContainer.transform.localPosition.x + 1.5f);
-        var posY = Mathf.RoundToInt(instantiatedContainer.transform.localPosition.y - 0.5f);
+        var posY = Mathf.RoundToInt(instantiatedContainer.transform.localPosition.y - 1.5f);
 
         var vanillaX = Mathf.Clamp(posX, 0, 3);
         var vanillaY = Mathf.Clamp(posY, 0, 2);
@@ -153,11 +153,11 @@ public class NotePlacement : PlacementController<BaseNote, NoteContainer, NoteGr
         if (UsePrecisionPlacement)
         {
             var precision = Settings.Instance.PrecisionPlacementGridPrecision;
-            roundedHit.x = Mathf.Round(roundedHit.x * precision) / precision;
-            roundedHit.y = Mathf.Round(roundedHit.y * precision) / precision;
+            roundedHit.x = Mathf.Round((roundedHit.x - 0.5f) * precision) / precision;
+            roundedHit.y = Mathf.Round((roundedHit.y - 0.5f) * precision) / precision;
             instantiatedContainer.transform.localPosition = roundedHit;
 
-            queuedData.CustomCoordinate = new Vector2(roundedHit.x - 0.5f, roundedHit.y - 0.5f);
+            queuedData.CustomCoordinate = new Vector2(roundedHit.x, roundedHit.y - 1f);
 
             precisionPlacement.TogglePrecisionPlacement(true);
             precisionPlacement.UpdateMousePosition(hit.Point);
@@ -167,7 +167,7 @@ public class NotePlacement : PlacementController<BaseNote, NoteContainer, NoteGr
             precisionPlacement.TogglePrecisionPlacement(false);
 
             queuedData.CustomCoordinate = !vanillaBounds
-                ? (JSONNode)new Vector2(Mathf.Round(roundedHit.x - 0.5f), Mathf.Round(roundedHit.y - 0.5f))
+                ? (JSONNode)new Vector2(Mathf.Round(roundedHit.x - 0.5f), Mathf.Round(roundedHit.y - 1.5f))
                 : null;
         }
 
