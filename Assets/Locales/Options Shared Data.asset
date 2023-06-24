@@ -1139,6 +1139,14 @@ MonoBehaviour:
     m_Key: map.precisionplacement.mode.tooltip
     m_Metadata:
       m_Items: []
+  - m_Id: 249214922956247040
+    m_Key: map.animations.tooltip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249224607608377344
+    m_Key: map.animations
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

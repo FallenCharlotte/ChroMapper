@@ -56,6 +56,7 @@ public class Settings
     public float PastNotesGridScale = 0.5f;
     // SongSpeed is a non-persistent setting
     // NoteLanes is a non-persistent setting
+    public bool Animations = true;
 
     public CountersPlusSettings CountersPlus = new CountersPlusSettings();
 
@@ -111,6 +112,7 @@ public class Settings
     public bool ChromaticAberration = true;
     public float PostProcessingIntensity = 0.1f;
     public float CameraFOV = 60f;
+    public float PlayerCameraFOV = 60f;
     public int CameraAA = 0;
     public int RenderScale = 100;
 

@@ -1128,6 +1128,14 @@ MonoBehaviour:
     m_Localized: Uninstalling ADB...
     m_Metadata:
       m_Items: []
+  - m_Id: 249214922956247040
+    m_Localized: Enables Noodle Extensions animations while in preview mode.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249224607608377344
+    m_Localized: Preview Animations
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
     00000000:
