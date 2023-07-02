@@ -1135,6 +1135,14 @@ MonoBehaviour:
     m_Localized: Pweyew Amnimasons
     m_Metadata:
       m_Items: []
+  - m_Id: 252032304653307904
+    m_Localized: Cwange Fwield of Wiew owof the pweyew camwa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252047222777614336
+    m_Localized: Preview Camera FOV
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
     00000000:
