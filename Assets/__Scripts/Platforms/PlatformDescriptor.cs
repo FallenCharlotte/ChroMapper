@@ -341,7 +341,7 @@ public class PlatformDescriptor : MonoBehaviour
             foreach (var lightID in lightIDArr)
             {
                 group.LightIDMap.TryGetValue(lightID, out var light);
-                if (light != null)
+                if (light is LightingEvent)
                 {
                     deezLights.Add(light);
                 }
@@ -373,7 +373,7 @@ public class PlatformDescriptor : MonoBehaviour
                     // light.UpdateMultiplyAlpha(color.a * floatValue);
                     light.UpdateTargetColor(color.Multiply(LightsManager.HDRIntensity), 0);
                     light.UpdateTargetAlpha(color.a * floatValue, 0);
-                    light.UpdateEasing("easeLinear");
+                    light.UpdateEasing(Easing.Linear);
                     TrySetTransition(light, e);
                     break;
                 case (int)LightValue.BlueFlash:
@@ -383,7 +383,7 @@ public class PlatformDescriptor : MonoBehaviour
                     light.UpdateTargetAlpha(color.a * floatValue, 0);
                     light.UpdateTargetColor(color.Multiply(LightsManager.HDRFlashIntensity), 0);
                     light.UpdateTargetColor(color.Multiply(LightsManager.HDRIntensity), LightsManager.FlashTime);
-                    light.UpdateEasing("easeOutCubic");
+                    light.UpdateEasing(Easing.Cubic.Out);
                     break;
                 case (int)LightValue.BlueFade:
                 case (int)LightValue.RedFade:
@@ -391,7 +391,7 @@ public class PlatformDescriptor : MonoBehaviour
                     // light.UpdateMultiplyAlpha(color.a * floatValue);
                     light.UpdateTargetAlpha(color.a * floatValue, 0);
                     light.UpdateTargetColor(color.Multiply(LightsManager.HDRFlashIntensity), 0);
-                    light.UpdateEasing("easeOutExpo");
+                    light.UpdateEasing(Easing.Exponential.Out);
                     if (light.CanBeTurnedOff)
                     {
                         light.UpdateTargetAlpha(0, LightsManager.FadeTime);
