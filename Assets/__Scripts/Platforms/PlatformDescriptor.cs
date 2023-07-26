@@ -18,7 +18,9 @@ public class PlatformDescriptor : MonoBehaviour
 
     [Header("Lighting Groups")]
     [Tooltip("Manually map an Event ID (Index) to a group of lights (LightingManagers)")]
-    public LightsManager[] LightingManagers = { };
+    public LightsManager[] BaseLightingManagers = { };
+
+    public Dictionary<int, LightsManager> LightingManagers = new Dictionary<int, LightsManager>();
 
     [Tooltip("If you want a thing to rotate around a 360 level with the track, place it here.")]
     public GridRotationController RotationController;
@@ -54,6 +56,10 @@ public class PlatformDescriptor : MonoBehaviour
     private void Start()
     {
         var eventHandlers = GetComponentsInChildren<PlatformEventHandler>();
+
+        for (var i = 0; i < BaseLightingManagers.Length; ++i) {
+            LightingManagers.Add(i, BaseLightingManagers[i]);
+        }
 
         foreach (var handler in eventHandlers)
         {
@@ -112,8 +118,9 @@ public class PlatformDescriptor : MonoBehaviour
 
     public void RefreshLightingManagers()
     {
-        foreach (var manager in LightingManagers)
+        foreach (var lm in LightingManagers)
         {
+            var manager = lm.Value;
             if (manager is null) continue;
             IEnumerable<LightingEvent> allLights = manager.ControllingLights;
             var lights = allLights.Where(x => !x.UseInvertedPlatformColors);
@@ -137,8 +144,9 @@ public class PlatformDescriptor : MonoBehaviour
 
     public void KillLights()
     {
-        foreach (var manager in LightingManagers)
+        foreach (var lm in LightingManagers)
         {
+            var manager = lm.Value;
             if (manager != null) manager.ChangeAlpha(0, 1, manager.ControllingLights);
         }
     }
@@ -205,7 +213,7 @@ public class PlatformDescriptor : MonoBehaviour
             case 12:
                 var leftEventTypes = new List<int>() { (int)EventTypeValue.LeftLasers, (int)EventTypeValue.ExtraLeftLasers, (int)EventTypeValue.ExtraLeftLights };
 
-                foreach (var eventType in leftEventTypes.Where(eventType => LightingManagers.Length >= eventType))
+                foreach (var eventType in leftEventTypes.Where(eventType => LightingManagers.Count >= eventType))
                 {
                     foreach (var l in LightingManagers[eventType].RotatingLights)
                     {
@@ -217,7 +225,7 @@ public class PlatformDescriptor : MonoBehaviour
             case 13:
                 var rightEventTypes = new List<int>() { (int)EventTypeValue.RightLasers, (int)EventTypeValue.ExtraRightLasers, (int)EventTypeValue.ExtraRightLights };
 
-                foreach (var eventType in rightEventTypes.Where(eventType => LightingManagers.Length >= eventType))
+                foreach (var eventType in rightEventTypes.Where(eventType => LightingManagers.ContainsKey(eventType)))
                 {
                     foreach (var l in LightingManagers[eventType].RotatingLights)
                     {
@@ -228,8 +236,9 @@ public class PlatformDescriptor : MonoBehaviour
                 break;
             case 5:
                 ColorBoost = e.Value == 1;
-                foreach (var manager in LightingManagers)
+                foreach (var lm in LightingManagers)
                 {
+                    var manager = lm.Value;
                     if (manager == null) continue;
 
                     manager.Boost(ColorBoost, ColorBoost ? Colors.RedBoostColor : Colors.RedColor,
@@ -238,7 +247,7 @@ public class PlatformDescriptor : MonoBehaviour
 
                 break;
             default:
-                if (e.Type < LightingManagers.Length && LightingManagers[e.Type] != null)
+                if (LightingManagers.ContainsKey(e.Type) && LightingManagers[e.Type] != null)
                     HandleLights(LightingManagers[e.Type], e.Value, e);
                 break;
         }

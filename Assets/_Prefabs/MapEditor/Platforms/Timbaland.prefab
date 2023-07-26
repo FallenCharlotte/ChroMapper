@@ -1115,7 +1115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SmallRingManager: {fileID: 0}
   BigRingManager: {fileID: 6297940537143348094}
-  LightingManagers:
+  BaseLightingManagers:
   - {fileID: 6297940535639536465}
   - {fileID: 6297940537143348093}
   - {fileID: 6297940536159356483}

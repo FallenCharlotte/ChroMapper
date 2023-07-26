@@ -85,7 +85,7 @@ public class EventGridContainer : BeatmapObjectContainerCollection, CMInput.IEve
                 value == PropMode.Off ? 16 + ExtraInterscopeLanes : propagationLength + 1);
             eventPlacement.SetGridSize(value != PropMode.Off
                 ? propagationLength + 1
-                : SpecialEventTypeCount + platformDescriptor.LightingManagers.Count(s => s != null));
+                : SpecialEventTypeCount + platformDescriptor.LightingManagers.Count(s => s.Value != null));
             EventTypePropagationSize = propagationLength;
             UpdatePropagationMode();
         }
@@ -121,11 +121,11 @@ public class EventGridContainer : BeatmapObjectContainerCollection, CMInput.IEve
     {
         if (!context.performed || PropagationEditing == PropMode.Off) return;
         var nextID = EventTypeToPropagate + 1;
-        if (nextID == platformDescriptor.LightingManagers.Length) nextID = 0;
+        if (nextID == platformDescriptor.LightingManagers.Count) nextID = 0;
         while (platformDescriptor.LightingManagers[nextID] == null)
         {
             nextID++;
-            if (nextID == platformDescriptor.LightingManagers.Length) nextID = 0;
+            if (nextID == platformDescriptor.LightingManagers.Count) nextID = 0;
         }
 
         EventTypeToPropagate = nextID;
@@ -136,11 +136,11 @@ public class EventGridContainer : BeatmapObjectContainerCollection, CMInput.IEve
     {
         if (!context.performed || PropagationEditing == PropMode.Off) return;
         var nextID = EventTypeToPropagate - 1;
-        if (nextID == -1) nextID = platformDescriptor.LightingManagers.Length - 1;
+        if (nextID == -1) nextID = platformDescriptor.LightingManagers.Count - 1;
         while (platformDescriptor.LightingManagers[nextID] == null)
         {
             nextID--;
-            if (nextID == -1) nextID = platformDescriptor.LightingManagers.Length - 1;
+            if (nextID == -1) nextID = platformDescriptor.LightingManagers.Count - 1;
         }
 
         EventTypeToPropagate = nextID;

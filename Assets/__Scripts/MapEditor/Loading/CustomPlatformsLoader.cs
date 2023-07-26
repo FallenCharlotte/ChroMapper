@@ -186,7 +186,7 @@ public class CustomPlatformsLoader : MonoBehaviour
     private void SetLightsManagerSize(GameObject gameObject)
     {
         var tubeLights = gameObject.GetComponentsInChildren<TubeLight>();
-        var maxSize = platformDescriptor.LightingManagers.Length;
+        var maxSize = platformDescriptor.LightingManagers.Count;
         foreach (var tubeLight in tubeLights)
         {
             switch (tubeLight.lightsID)
@@ -209,8 +209,8 @@ public class CustomPlatformsLoader : MonoBehaviour
             }
         }
 
-        if (maxSize != platformDescriptor.LightingManagers.Length)
-            Array.Resize(ref platformDescriptor.LightingManagers, maxSize);
+        /*if (maxSize != platformDescriptor.LightingManagers.Count)
+            Array.Resize(ref platformDescriptor.LightingManagers, maxSize);*/
     }
 
     private void SetLightingEventsForTubeLights(GameObject gameObject)

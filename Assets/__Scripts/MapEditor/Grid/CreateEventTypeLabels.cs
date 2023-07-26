@@ -26,7 +26,7 @@ public class CreateEventTypeLabels : MonoBehaviour
 
     private readonly List<LaneInfo> laneObjs = new List<LaneInfo>();
 
-    private LightsManager[] lightingManagers;
+    private Dictionary<int, LightsManager> lightingManagers;
     private bool loadedWithRotationEvents;
     [HideInInspector] public int NoRotationLaneOffset => loadedWithRotationEvents || RotationCallback.IsActive ? 0 : -2;
 
@@ -148,7 +148,7 @@ public class CreateEventTypeLabels : MonoBehaviour
                             textMesh.font = UtilityAsset;
                             break;
                         default:
-                            if (lightingManagers.Length > i)
+                            if (lightingManagers.Count > i)
                             {
                                 var customLight = lightingManagers[i];
 
@@ -186,7 +186,7 @@ public class CreateEventTypeLabels : MonoBehaviour
 
     public int? LightIdsToPropId(int type, int[] lightID)
     {
-        if (type >= lightingManagers.Length) return null;
+        if (type >= lightingManagers.Count) return null;
 
         var light = lightingManagers[type].ControllingLights.Find(x => lightID.Contains(x.LightID));
 
@@ -195,7 +195,7 @@ public class CreateEventTypeLabels : MonoBehaviour
 
     public int[] PropIdToLightIds(int type, int propID)
     {
-        if (type >= lightingManagers.Length)
+        if (type >= lightingManagers.Count)
             return new int[0];
 
         return lightingManagers[type].ControllingLights.Where(x => x.PropGroup == propID).Select(x => x.LightID)

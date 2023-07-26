@@ -24,20 +24,21 @@ public class PlatformSoloEventTypeUIController : MonoBehaviour, CMInput.IPlatfor
 
     private void HandleUpdateSoloEventType(string res)
     {
+
         if (string.IsNullOrEmpty(res) || string.IsNullOrWhiteSpace(res))
         {
             descriptor.UpdateSoloEventType(false, 0);
         }
         else if (int.TryParse(res, out var id))
         {
-            if (id >= 0 && id < descriptor.LightingManagers.Length)
+            if (id >= 0 && id < descriptor.LightingManagers.Count)
                 descriptor.UpdateSoloEventType(true, id);
         }
-        else if (descriptor.LightingManagers.Any(x => x.name == res))
+        else
         {
-            descriptor.UpdateSoloEventType(true,
-                descriptor.LightingManagers.ToList().IndexOf(
-                    descriptor.LightingManagers.First(x => x.name == res)));
+            var lm = descriptor.LightingManagers.Where(x => x.Value.name == res);
+            if (lm.Any())
+                descriptor.UpdateSoloEventType(true, lm.First().Key);
         }
 
         soloEventTypeLabel.gameObject.SetActive(descriptor.SoloAnEventType);
