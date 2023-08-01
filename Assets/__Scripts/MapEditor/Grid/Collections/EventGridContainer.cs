@@ -28,6 +28,8 @@ public class EventGridContainer : BeatmapObjectContainerCollection, CMInput.IEve
 
     public int EventTypeToPropagate = (int)EventTypeValue.RingLights;
     public int EventTypePropagationSize;
+    private List<int> eventPropagationTypes;
+    private int eventPropagationIndex;
 
     public List<BaseEvent> AllRotationEvents = new List<BaseEvent>();
     public List<BaseEvent> AllBoostEvents = new List<BaseEvent>();
@@ -120,30 +122,28 @@ public class EventGridContainer : BeatmapObjectContainerCollection, CMInput.IEve
     public void OnCycleLightPropagationUp(InputAction.CallbackContext context)
     {
         if (!context.performed || PropagationEditing == PropMode.Off) return;
-        var nextID = EventTypeToPropagate + 1;
-        if (nextID == platformDescriptor.LightingManagers.Count) nextID = 0;
-        while (platformDescriptor.LightingManagers[nextID] == null)
+        do
         {
-            nextID++;
-            if (nextID == platformDescriptor.LightingManagers.Count) nextID = 0;
+            ++eventPropagationIndex;
+            if (eventPropagationIndex == eventPropagationTypes.Count) eventPropagationIndex = 0;
         }
+        while (platformDescriptor.LightingManagers[eventPropagationTypes[eventPropagationIndex]] == null);
 
-        EventTypeToPropagate = nextID;
+        EventTypeToPropagate = eventPropagationTypes[eventPropagationIndex];
         PropagationEditing = PropagationEditing;
     }
 
     public void OnCycleLightPropagationDown(InputAction.CallbackContext context)
     {
         if (!context.performed || PropagationEditing == PropMode.Off) return;
-        var nextID = EventTypeToPropagate - 1;
-        if (nextID == -1) nextID = platformDescriptor.LightingManagers.Count - 1;
-        while (platformDescriptor.LightingManagers[nextID] == null)
+        do
         {
-            nextID--;
-            if (nextID == -1) nextID = platformDescriptor.LightingManagers.Count - 1;
+            --eventPropagationIndex;
+            if (eventPropagationIndex == -1) eventPropagationIndex = eventPropagationTypes.Count - 1;
         }
+        while (platformDescriptor.LightingManagers[eventPropagationTypes[eventPropagationIndex]] == null);
 
-        EventTypeToPropagate = nextID;
+        EventTypeToPropagate = eventPropagationTypes[eventPropagationIndex];
         PropagationEditing = PropagationEditing;
     }
 
@@ -486,11 +486,17 @@ public class EventGridContainer : BeatmapObjectContainerCollection, CMInput.IEve
         lightEventsWithKnownPrevNext.Remove(e.Next);
     }
 
-    public void LinkAllLightEvents() =>
+    public void LinkAllLightEvents()
+    {
+        Debug.Log("LinkAllLightEvents");
         AllLightEvents = LoadedObjects.OfType<BaseEvent>().
             Where(x => x.IsLightEvent()).
             GroupBy(x => x.Type).
             ToDictionary(g => g.Key, g => g.ToList());
+
+        eventPropagationTypes = platformDescriptor.LightingManagers.Keys.OrderBy(k => k).ToList();
+        eventPropagationIndex = eventPropagationTypes.IndexOf(EventTypeToPropagate);
+    }
 
     public void RefreshEventsAppearance(IEnumerable<BaseEvent> events)
     {

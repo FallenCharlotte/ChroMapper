@@ -53,17 +53,22 @@ public class LightingEvent : MonoBehaviour
         {
             var descriptor = LoadInitialMap.Platform;
 
-            // TODO: Add types?
-            if (descriptor != null && descriptor.LightingManagers.ContainsKey(OverrideLightGroupID))
+            if (descriptor == null) return;
+
+            if (!descriptor.LightingManagers.ContainsKey(OverrideLightGroupID) || descriptor.LightingManagers[OverrideLightGroupID] == null)
             {
-                var lm = descriptor.LightingManagers[OverrideLightGroupID];
-                while (lm.LightIDPlacementMapReverse?.ContainsKey(LightID) ?? false)
-                {
-                    ++LightID;
-                }
-                lm.ControllingLights.Add(this);
-                lm.LoadOldLightOrder();
+                var customObj = new GameObject();
+                customObj.transform.parent = descriptor.LightingManagers[0].transform;
+                descriptor.LightingManagers[OverrideLightGroupID] = customObj.AddComponent<LightsManager>();
             }
+
+            var lm = descriptor.LightingManagers[OverrideLightGroupID];
+            while (lm.LightIDPlacementMapReverse?.ContainsKey(LightID) ?? false)
+            {
+                ++LightID;
+            }
+            lm.ControllingLights.Add(this);
+            lm.LoadOldLightOrder();
         }
     }
 
