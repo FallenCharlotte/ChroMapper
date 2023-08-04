@@ -22,18 +22,15 @@ public class CustomEventGridContainer : BeatmapObjectContainerCollection, CMInpu
     [SerializeField] private Transform[] customEventScalingOffsets;
     [SerializeField] private TracksManager tracksManager;
     [SerializeField] private CameraController playerCamera;
-    private List<string> customEventTypes = new List<string>();
     private List<GeometryContainer> geometries = new List<GeometryContainer>();
 
     public override ObjectType ContainerType => ObjectType.CustomEvent;
 
-    public ReadOnlyCollection<string> CustomEventTypes => customEventTypes.AsReadOnly();
-
     public Dictionary<string, List<BaseCustomEvent>> EventsByTrack;
+    public List<string> EventTracks;
 
     private void Start()
     {
-        RefreshTrack();
         if (!Settings.Instance.AdvancedShit)
         {
             Debug.LogWarning("Disabling some objects since an Advanced setting is not enabled...");
@@ -155,16 +152,13 @@ public class CustomEventGridContainer : BeatmapObjectContainerCollection, CMInpu
             var at = tracksManager.CreateAnimationTrack(track.Key);
             at.SetEvents(track.Value.Where(ev => ev.Type == "AnimateTrack").ToList());
         }
+
+        EventTracks = EventsByTrack.Keys.OrderBy(s => s).ToList();
     }
 
     protected override void OnObjectSpawned(BaseObject obj, bool inCollection = false)
     {
         var customEvent = obj as BaseCustomEvent;
-        if (!customEventTypes.Contains(customEvent.Type))
-        {
-            customEventTypes.Add(customEvent.Type);
-            RefreshTrack();
-        }
 
         tracksManager.ResetAnimationTracks();
         RefreshEventsByTrack();
@@ -176,25 +170,28 @@ public class CustomEventGridContainer : BeatmapObjectContainerCollection, CMInpu
         foreach (var t in customEventScalingOffsets)
         {
             var localScale = t.localScale;
-            if (customEventTypes.Count == 0)
+            if (EventsByTrack.Count == 0)
             {
                 t.gameObject.SetActive(false);
             }
             else
             {
                 t.gameObject.SetActive(true);
-                t.localScale = new Vector3((customEventTypes.Count / 10f) + 0.01f, localScale.y, localScale.z);
+                t.localScale = new Vector3((EventsByTrack.Count / 10f) + 0.01f, localScale.y, localScale.z);
             }
         }
 
         for (var i = 0; i < customEventLabelTransform.childCount; i++)
             Destroy(customEventLabelTransform.GetChild(i).gameObject);
-        foreach (var str in customEventTypes)
+
+        var j = 0;
+        foreach (var str in EventTracks)
         {
             var newShit = Instantiate(customEventLabelPrefab.gameObject, customEventLabelTransform)
                 .GetComponent<TextMeshProUGUI>();
-            newShit.rectTransform.localPosition = new Vector3(customEventTypes.IndexOf(str), 0.25f, 0);
+            newShit.rectTransform.localPosition = new Vector3(j, 0.25f, 0);
             newShit.text = str;
+            ++j;
         }
 
         foreach (var obj in LoadedContainers.Values) obj.UpdateGridPosition();
@@ -204,15 +201,8 @@ public class CustomEventGridContainer : BeatmapObjectContainerCollection, CMInpu
 
     private void SetInitialTracks()
     {
-        foreach (var loadedObject in UnsortedObjects)
-        {
-            var customEvent = loadedObject as BaseCustomEvent;
-            if (!customEventTypes.Contains(customEvent.Type))
-            {
-                customEventTypes.Add(customEvent.Type);
-                RefreshTrack();
-            }
-        }
+        RefreshEventsByTrack();
+        RefreshTrack();
     }
 
     internal override void UnsubscribeToCallbacks() => LoadInitialMap.LevelLoadedEvent -= SetInitialTracks;
@@ -230,8 +220,6 @@ public class CustomEventGridContainer : BeatmapObjectContainerCollection, CMInpu
     private void HandleNewTypeCreation(string res)
     {
         if (string.IsNullOrEmpty(res) || string.IsNullOrWhiteSpace(res)) return;
-        customEventTypes.Add(res);
-        customEventTypes = customEventTypes.OrderBy(x => x).ToList();
         RefreshTrack();
     }
 

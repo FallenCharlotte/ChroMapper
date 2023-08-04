@@ -12,9 +12,20 @@ using UnityEngine;
 public class
     CustomEventPlacement : PlacementController<BaseCustomEvent, CustomEventContainer, CustomEventGridContainer>
 {
+    public enum CustomEventTypes
+    {
+        AnimateTrack,
+        AssignPathAnimation,
+        AssignTrackParent,
+        AssignPlayerToTrack,
+        AnimateComponent
+    }
+
+    private CustomEventTypes currentType = CustomEventTypes.AnimateTrack;
+
     private readonly List<TextAsset> customEventDataPresets = new List<TextAsset>();
 
-    public override int PlacementXMax => objectContainerCollection.CustomEventTypes.Count;
+    public override int PlacementXMax => objectContainerCollection.EventsByTrack.Count;
 
     [HideInInspector] protected override bool CanClickAndDrag { get; set; } = false;
 
@@ -29,6 +40,11 @@ public class
         base.Start();
     }
 
+    public void SetType(CustomEventTypes type)
+    {
+        currentType = type;
+    }
+
     public override BeatmapAction GenerateAction(BaseObject spawned, IEnumerable<BaseObject> conflicting) =>
         new BeatmapObjectPlacementAction(spawned, conflicting, "Placed a Custom Event.");
 
@@ -38,9 +54,12 @@ public class
     {
         var localPosition = instantiatedContainer.transform.localPosition;
         instantiatedContainer.transform.localPosition = new Vector3(localPosition.x, 0.5f, localPosition.z);
-        var customEventTypeId = Mathf.CeilToInt(instantiatedContainer.transform.localPosition.x);
-        if (customEventTypeId < objectContainerCollection.CustomEventTypes.Count && customEventTypeId >= 0)
-            queuedData.Type = objectContainerCollection.CustomEventTypes[customEventTypeId];
+        var customTrackId = Mathf.CeilToInt(localPosition.x);
+        if (customTrackId >= 0 && customTrackId < objectContainerCollection.EventsByTrack.Count)
+            queuedData.CustomTrack = objectContainerCollection.EventTracks[customTrackId];
+        queuedData.Type = (currentType == CustomEventTypes.AnimateComponent && !Settings.Instance.Load_MapV3)
+            ? "AssignFogTrack"
+            : currentType.ToString();
     }
 
     internal override void ApplyToMap()

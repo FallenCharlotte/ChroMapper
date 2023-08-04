@@ -8,6 +8,7 @@ public class KeybindUpdateUIController : MonoBehaviour, CMInput.IWorkflowsAction
     [SerializeField] private PlacementModeController placeMode;
     [SerializeField] private LightingModeController lightMode;
     [SerializeField] private EventPlacement eventPlacement;
+    [SerializeField] private CustomEventPlacement customEventPlacement;
     [SerializeField] private PrecisionStepDisplayController stepController;
     [SerializeField] private RightButtonPanel rightButtonPanel;
 

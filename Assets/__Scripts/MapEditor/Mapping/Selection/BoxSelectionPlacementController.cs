@@ -7,6 +7,7 @@ using Beatmap.Base.Customs;
 using Beatmap.Containers;
 using Beatmap.Enums;
 using Beatmap.V2;
+using SimpleJSON;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -172,7 +173,11 @@ public class BoxSelectionPlacementController : PlacementController<BaseEvent, Ev
                 }
                 else if (bo is BaseCustomEvent custom)
                 {
-                    p = new Vector2(CustomCollection.CustomEventTypes.IndexOf(custom.Type) + Bounds.min.x + 0.5f,
+                    p = new Vector2(CustomCollection.EventTracks.IndexOf(custom.CustomTrack switch {
+                            JSONString s => s.Value,
+                            JSONArray arr => arr[0].Value,
+                            _ => "",
+                        }) + Bounds.min.x + 0.5f,
                         0.5f);
                 }
 

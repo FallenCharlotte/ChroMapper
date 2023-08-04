@@ -1,5 +1,6 @@
 using Beatmap.Base;
 using Beatmap.Base.Customs;
+using SimpleJSON;
 using UnityEngine;
 
 namespace Beatmap.Containers
@@ -26,8 +27,14 @@ namespace Beatmap.Containers
 
         public override void UpdateGridPosition()
         {
+            var track = CustomEventData.DataParentTrack ?? CustomEventData.CustomTrack switch {
+                JSONString s => s.Value,
+                JSONArray arr => arr[0].Value,
+            };
+            var x = collection.EventTracks.IndexOf(track);
             transform.localPosition = new Vector3(
-                collection.CustomEventTypes.IndexOf(CustomEventData.Type), 0.5f,
+                x,
+                0.5f,
                 CustomEventData.SongBpmTime * EditorScaleController.EditorScale);
             UpdateCollisionGroups();
         }
