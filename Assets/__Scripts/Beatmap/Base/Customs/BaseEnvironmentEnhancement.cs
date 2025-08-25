@@ -70,14 +70,15 @@ namespace Beatmap.Base.Customs
                 {
                     if (Components["ILightWithId"] != null)
                         Components["ILightWithId"]["lightID"] = value;
-                    else
+                    else if (value != null)
                         Components["ILightWithId"] = new JSONObject { ["lightID"] = value };
                 }
-                else
+                else if (value != null)
                 {
                     var iLightWithID = new JSONObject { ["lightID"] = value };
                     Components = new JSONObject { ["ILightWithId"] = iLightWithID };
                 }
+                //Components = SimpleJSONHelper.CleanObject(Components);
             }
         }
 
@@ -97,14 +98,15 @@ namespace Beatmap.Base.Customs
                 {
                     if (Components["ILightWithId"] != null)
                         Components["ILightWithId"]["type"] = value;
-                    else
+                    else if (value != null)
                         Components["ILightWithId"] = new JSONObject { ["type"] = value };
                 }
-                else
+                else if (value != null)
                 {
                     var iLightWithID = new JSONObject { ["type"] = value };
                     Components = new JSONObject { ["ILightWithId"] = iLightWithID };
                 }
+                //Components = SimpleJSONHelper.CleanObject(Components);
             }
         }
 

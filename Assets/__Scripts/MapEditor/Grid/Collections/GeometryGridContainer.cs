@@ -28,6 +28,7 @@ public class GeometryGridContainer : BeatmapObjectContainerCollection<BaseEnviro
             ObjectsWithContainers.Add(eh);
             geometryAppearanceSo.SetGeometryAppearance(container);
         }
+        Debug.Log($"Geos: {MapObjects.Count}");
     }
 
     protected override void OnObjectDelete(BaseObject obj, bool inCollection = false)

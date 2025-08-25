@@ -7,7 +7,7 @@ using UnityEngine;
 internal class PluginLoader : MonoBehaviour
 {
     private const string pluginDir = "Plugins";
-    private const bool loadPluginsInEditor = false;
+    private const bool loadPluginsInEditor = true;
 
     //there shouldn't be any issues with making this static, but if there are let me know
     private static readonly List<Plugin> plugins = new List<Plugin>();
